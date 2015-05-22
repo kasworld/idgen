@@ -1,3 +1,14 @@
+// Copyright 2015 SeukWon Kang (kasworld@gmail.com)
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//    http://www.apache.org/licenses/LICENSE-2.0
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 // serial id gen package
 package idgen
 
@@ -19,7 +30,9 @@ func NewUUID() *UUID {
 	return &u
 }
 
-type IDList []int64
+type IDInt int64
+
+type IDList []IDInt
 
 func (s IDList) Len() int {
 	return len(s)
@@ -31,16 +44,16 @@ func (s IDList) Less(i, j int) bool {
 	return s[i] < s[j]
 }
 
-func (s IDList) FindIndex(id int64) int {
+func (s IDList) FindIndex(id IDInt) int {
 	return sort.Search(len(s), func(i int) bool { return s[i] >= id })
 }
 
-var genCh chan int64
+var genCh chan IDInt
 
 func init() {
-	genCh = make(chan int64)
+	genCh = make(chan IDInt)
 	go func() {
-		var i int64
+		var i IDInt
 		for {
 			i++
 			genCh <- i
@@ -48,6 +61,6 @@ func init() {
 	}()
 }
 
-func GenCh() <-chan int64 {
+func GenCh() <-chan IDInt {
 	return genCh
 }
