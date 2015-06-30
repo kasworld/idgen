@@ -32,6 +32,10 @@ func NewUUID() *UUID {
 
 type IDInt int64
 
+func (id IDInt) String() string {
+	return fmt.Sprintf("0x%0X", int64(id))
+}
+
 type IDList []IDInt
 
 func (s IDList) Len() int {
@@ -51,6 +55,8 @@ func (s IDList) FindIndex(id IDInt) int {
 var genCh chan IDInt
 
 func init() {
+	// println("init id chan")
+
 	genCh = make(chan IDInt)
 	go func() {
 		var i IDInt
