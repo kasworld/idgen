@@ -15,7 +15,6 @@ package idgen
 import (
 	crand "crypto/rand"
 	"fmt"
-	"sort"
 )
 
 type UUID [16]uint8
@@ -28,45 +27,4 @@ func NewUUID() *UUID {
 	u := UUID{}
 	crand.Read(u[:])
 	return &u
-}
-
-type IDInt int64
-
-func (id IDInt) String() string {
-	return fmt.Sprintf("0x%0X", int64(id))
-}
-
-type IDList []IDInt
-
-func (s IDList) Len() int {
-	return len(s)
-}
-func (s IDList) Swap(i, j int) {
-	s[i], s[j] = s[j], s[i]
-}
-func (s IDList) Less(i, j int) bool {
-	return s[i] < s[j]
-}
-
-func (s IDList) FindIndex(id IDInt) int {
-	return sort.Search(len(s), func(i int) bool { return s[i] >= id })
-}
-
-var genCh chan IDInt
-
-func init() {
-	// println("init id chan")
-
-	genCh = make(chan IDInt)
-	go func() {
-		var i IDInt
-		for {
-			i++
-			genCh <- i
-		}
-	}()
-}
-
-func GenCh() <-chan IDInt {
-	return genCh
 }
